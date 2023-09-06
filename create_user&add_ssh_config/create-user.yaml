@@ -1,0 +1,55 @@
+---
+- name: create user
+  hosts: jmp
+  become: true
+  vars_files:
+    - env.yaml
+  tasks:
+  - name: create user and generate ssh key at remote host
+    user:
+      name: "{{ item }}"
+      # generate_ssh_key: yes
+      # ssh_key_bits: 2048
+      # ssh_key_file: .ssh/id_rsa_{{ item }}
+    with_items: 
+    - "{{ users }}"
+  - name: Create .ssh folder at remote host
+    file:
+      path: ~{{ item }}/.ssh
+      state: directory
+      owner: "{{ item }}"
+      group: "{{ item }}"
+      mode: 0700
+    with_items: 
+    - "{{ users }}"
+  - name: add authorized_keys at created user
+    copy:
+      src: "{{ public_key_folder }}/{{ item }}.pub"
+      dest: /home/{{ item }}/.ssh/authorized_keys
+      owner: "{{ item }}"
+      group: "{{ item }}"
+      mode: '0644'
+    with_items: 
+    - "{{ users }}"
+  - name: add private key for monitoring user at remote host
+    copy: 
+      content: "{{ monitoring_user_pem }}"
+      dest: /home/{{ item }}/.ssh/monitoring_user.pem
+      owner: "{{ item }}"
+      group: "{{ item }}"
+      mode: '0644'
+    with_items: 
+    - "{{ users }}"
+  - name: add ssh config for logging in to monitoring server
+    copy:
+      content: "{{ ssh_config_content }}"
+      dest: /home/{{ item }}/.ssh/config
+      owner: "{{ item }}"
+      group: "{{ item }}"
+    with_items: 
+    - "{{ users }}"
+  # - name: debug the variable
+  #   debug:
+  #     msg: "{{ public_key_folder }}/{{ item }}-pub"
+  #   with_items: 
+  #   - "{{ users }}"
