@@ -37,7 +37,7 @@
       dest: /home/{{ item }}/.ssh/monitoring_user.pem
       owner: "{{ item }}"
       group: "{{ item }}"
-      mode: '0644'
+      mode: '0400'
     with_items: 
     - "{{ users }}"
   - name: add ssh config for logging in to monitoring server
