@@ -1,0 +1,46 @@
+
+- name: bind installation
+  dnf:
+    name: '{{ item }}'
+    state: present
+  with_items: '{{ bind.bind_packages }}'
+- name: enable and start named service
+  systemd:
+    name: named
+    state: started
+    enabled: yes
+- name: copy named configuration
+  copy:
+    src: /etc/named.conf
+    dest: /etc/named.conf.orig
+    remote_src: true
+    group: named
+- name: check zone file already exit
+  shell: grep -c {{ bind.zone_file_location }} /etc/named.conf|| true
+  register: check_zone_file
+- name: insert zone block
+  lineinfile:
+    path: /etc/named.conf
+    line: "{{ bind.zone_block }}"
+    insertbefore: EOF
+    backup: true
+  when: check_zone_file.stdout == "0"
+- name: create zone file and add record
+  copy:
+    content: '{{ bind.zone_file_record }}'
+    dest: '{{ bind.zone_file_location }}'
+    group: named
+- name: debug ipv4 address
+  debug:
+    var: ansible_default_ipv4.address
+- name: check the named configuration
+  shell: named-checkconf
+  register: named_check_ouput
+- name: print checking named configuration named_check_ouput
+  debug:
+    var: named_check_ouput.stdout-lines
+- name: restarted named service
+  systemd:
+    name: named
+    state: restarted
+    enabled: yes
