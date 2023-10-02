@@ -1,0 +1,24 @@
+- name: ntp server installation
+  dnf:
+    name: chrony
+    state: present
+- name: enable and start ntp service
+  systemd:
+    name: chronyd
+    state: started
+    enabled: yes
+- name: backup chrony.conf configuration
+  copy:
+    src: /etc/chrony.conf
+    dest: /etc/chrony.conf.orig
+    remote_src: true
+- name: add timeserver config in chrony.conf
+  lineinfile:
+    path: /etc/chrony.conf
+    regexp: '^server'
+    line: "{{ ntp.server_ip }}"
+    # backup: true
+- name: restart ntp service
+  systemd:
+    name: chronyd
+    state: restarted

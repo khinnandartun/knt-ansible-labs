@@ -1,9 +1,0 @@
-- name: ntp installation
-  dnf:
-    name: chrony
-    state: present
-- name: enable and start ntp service
-  systemd:
-    name: chronyd
-    state: started
-    enabled: yes

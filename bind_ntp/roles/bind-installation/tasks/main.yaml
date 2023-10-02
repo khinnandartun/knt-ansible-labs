@@ -9,7 +9,7 @@
     name: named
     state: started
     enabled: yes
-- name: copy named configuration
+- name: backup named configuration
   copy:
     src: /etc/named.conf
     dest: /etc/named.conf.orig
