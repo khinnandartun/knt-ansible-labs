@@ -1,5 +1,0 @@
-- hosts: test
-  become: true
-  roles:
-    - { role: bind-installation , tags: 'bind'}
-    - { role: ntp-server-installation , tags: 'ntp'}

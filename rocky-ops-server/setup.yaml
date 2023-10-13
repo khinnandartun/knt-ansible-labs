@@ -1,0 +1,19 @@
+- hosts: bind
+  become: true
+  roles:
+    - { role: bind-server , tags: 'bind-server'}
+
+- hosts: ntp_server
+  become: true
+  roles:
+    - { role: ntp-server , tags: 'ntp-server'}
+
+- hosts: ntp_client
+  become: true
+  roles:
+    - { role: ntp-client , tags: 'ntp-client'}
+
+- hosts: rsyslog_server
+  become: true
+  roles:
+    - { role: rsyslog-server , tags: 'rsyslog-server'}
