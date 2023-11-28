@@ -34,12 +34,12 @@
 - name: add the rsyslog template format
   lineinfile:
     path: /etc/rsyslog.conf
-    line: "{{ rsyslog.template_format }}"
+    line: "{{ rsyslog_server.template_format }}"
     insertafter: "EOF"
   when: template_exit.stdout == "0"
 - name: create directory for remote log
   file:
-    path: /var/log/remote-logs
+    path: "{{ rsyslog_server.remote_log_dir }}"
     state: directory
 - name: check the rsyslog cof
   shell: rsyslogd -N1 -f /etc/rsyslog.conf
@@ -47,4 +47,5 @@
   systemd:
     name: rsyslog
     state: restarted
+    enabled: yes
 

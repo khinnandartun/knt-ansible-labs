@@ -3,35 +3,57 @@ bind:
   - bind
   - bind-utils
   zone_file_location: /etc/named/db.knt.local
-  zone_block: |
-    zone "knt.local" IN {
-      type master;
-      file "/etc/named/db.knt.local";
-      allow-update { none; };
-      allow-query {any; };
-    };
-  zone_file_record: |
-    $TTL 86400
-    @ IN SOA dns-primary.knt.local. admin.knt.local. (
-        2019061800 ;Serial
-        3600 ;Refresh
-        1800 ;Retry
-        604800 ;Expire
-        86400 ;Minimum TTL
-    )
 
-    ;Name Server Information
-    @ IN NS dns-primary.knt.local.
+freeipa_server:
+  admin_password: adminpassword
+  server_domain: "{{ ansible_domain }}"
+  realm_name: "{{ ansible_domain | upper }}"
+  netbios_name: "{{ ansible_domain | split('.') | first | upper }}"
 
-    ;IP for Name Server
-    dns-primary IN A {{ ansible_default_ipv4.address }}
 
-ntp:
+freeipa_client:
+  servernamefqdn: ip-172-31-14-34.ap-southeast-1.compute.internal
+
+freeipa_group:
+  kerberos_username: admin
+  kerberos_password: adminpassword
+  kerberos_auth_question:
+      "Password for admin@AP-SOUTHEAST-1.COMPUTE.INTERNAL:": "adminpassword"
+  group_list:
+    - sysadmin
+    - sre
+    - devops
+    - ugitops
+
+freeipa_user:
+  kerberos_username: admin
+  kerberos_password: adminpassword
+  kerberos_auth_question:
+      "Password for admin@AP-SOUTHEAST-1.COMPUTE.INTERNAL:": "adminpassword"
+  user_list:
+    - { user_id: knt , first_name: Khin Nandar , last_name: Tun ,  password: khinnandartun ,  groups: [sre, devops] }
+    - { user_id: waiyan , first_name: Wai Yan , last_name: Myint Myat ,  password: waiyanmyintmyat ,  groups: [sre, devops] }
+
+
+ntp_server:
   time_server_config: |
     server 0.asia.pool.ntp.org iburst
     server 1.asia.pool.ntp.org iburst
     server 2.asia.pool.ntp.org iburst
     server 3.asia.pool.ntp.org iburst
-    allow 172.22.166.0/24
-  server_ip: server 177.22.166.20 iburst
+  client_network: allow 172.31.0.0/20
+
+ntp_client:
+  server_ip: server 172.31.4.43 iburst
+
+rsyslog_server:
+  template_format: |
+    ## Remote Logs Template
+    $template Incoming-logs,"/var/log/remote-log/%HOSTNAME%/%PROGRAMNAME%.log"
+    *.* ?Incoming-logs
+    $template authpriv.*,"/var/log/remote-log/%HOSTNAME%/secure"
+  remote_log_dir: /var/log/remote-log
+
+rsyslog_client:
+  server_config: "*.*  @172.31.15.144:514"
 

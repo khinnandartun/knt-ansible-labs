@@ -10,13 +10,18 @@
 - name: backup chrony.conf configuration
   copy:
     src: /etc/chrony.conf
-    dest: /etc/chrony.conf.orig
+    dest: /etc/chrony.conf.{{ansible_date_time.date}}.backup
     remote_src: true
+- name: check ntp server already exist
+  command: grep -c "{{ ntp_client.server_ip }}" /etc/chrony.conf
+  ignore_errors: yes
+  register: ntpserver_info_exist
 - name: add timeserver config in chrony.conf
   lineinfile:
     path: /etc/chrony.conf
-    regexp: '^server'
-    line: "{{ ntp.server_ip }}"
+    regexp: '^server|^pool'
+    line: "{{ ntp_client.server_ip }}"
+  when: ntpserver_info_exist.stdout == "0"
     # backup: true
 - name: restart ntp service
   systemd:

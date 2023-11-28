@@ -1,0 +1,8 @@
+- name: authennticate Kerberos credentials
+  expect:
+    command:  kinit {{ freeipa_group.kerberos_username }}
+    responses: "{{ freeipa_group.kerberos_auth_question }}"
+    echo: yes
+- name: create group at freeipa
+  command: ipa group-add {{ item }}
+  with_items: '{{ freeipa_group.group_list }}'

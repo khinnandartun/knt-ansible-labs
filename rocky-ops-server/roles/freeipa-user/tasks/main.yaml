@@ -1,0 +1,22 @@
+- name: debug the variable
+  debug:
+    msg: ipa user-add --first={{ item.first_name }} --last={{ item.last_name }} --password  {{ item.user_id }}
+  with_items: '{{ freeipa_user.user_list }}'
+
+- name: authennticate Kerberos credentials
+  expect:
+    command:  kinit {{ freeipa_user.kerberos_username }}
+    responses: "{{ freeipa_user.kerberos_auth_question }}"
+    echo: yes
+
+- name: add the user at freeipa
+  expect:
+    command:  ipa user-add --password  {{ item.user_id }}
+    responses:
+      'First name:': "{{ item.first_name }}"
+      'Last name:': "{{ item.last_name }}"
+      'Password:': "{{ item.password }}"
+      'Enter Password again to verify:': "{{ item.password }}"
+    echo: yes
+  with_items: '{{ freeipa_user.user_list }}'
+  

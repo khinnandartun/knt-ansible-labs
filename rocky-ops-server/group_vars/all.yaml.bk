@@ -1,0 +1,37 @@
+bind:
+  bind_packages:
+  - bind
+  - bind-utils
+  zone_file_location: /etc/named/db.knt.local
+  zone_block: |
+    zone "knt.local" IN {
+      type master;
+      file "/etc/named/db.knt.local";
+      allow-update { none; };
+      allow-query {any; };
+    };
+  zone_file_record: |
+    $TTL 86400
+    @ IN SOA dns-primary.knt.local. admin.knt.local. (
+        2019061800 ;Serial
+        3600 ;Refresh
+        1800 ;Retry
+        604800 ;Expire
+        86400 ;Minimum TTL
+    )
+
+    ;Name Server Information
+    @ IN NS dns-primary.knt.local.
+
+    ;IP for Name Server
+    dns-primary IN A {{ ansible_default_ipv4.address }}
+
+ntp:
+  time_server_config: |
+    server 0.asia.pool.ntp.org iburst
+    server 1.asia.pool.ntp.org iburst
+    server 2.asia.pool.ntp.org iburst
+    server 3.asia.pool.ntp.org iburst
+    allow 172.22.166.0/24
+  server_ip: server 177.22.166.20 iburst
+

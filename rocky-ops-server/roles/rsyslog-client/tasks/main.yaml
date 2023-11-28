@@ -1,0 +1,19 @@
+- name: install rsyslog using dnf
+  dnf:
+    name: rsyslog
+    state: present
+- name: backup rsyslog configuration
+  copy:
+    src: /etc/rsyslog.conf
+    dest: /etc/rsyslog.conf.{{ansible_date_time.date}}.backup
+    remote_src: true
+- name: add remoter server config
+  lineinfile:
+    path: /etc/rsyslog.conf
+    line: "{{ rsyslog_client.server_config }}"
+    insertafter: "EOF"
+- name: restart rsyslog service
+  systemd:
+    name: rsyslog
+    state: restarted
+    enabled: yes

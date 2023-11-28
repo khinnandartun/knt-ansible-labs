@@ -15,24 +15,16 @@
     dest: /etc/named.conf.orig
     remote_src: true
     group: named
-- name: check zone file already exit
-  shell: grep -c {{ bind.zone_file_location }} /etc/named.conf|| true
-  register: check_zone_file
-- name: insert zone block
-  lineinfile:
-    path: /etc/named.conf
-    line: "{{ bind.zone_block }}"
-    insertbefore: EOF
-    backup: true
-  when: check_zone_file.stdout == "0"
-- name: create zone file and add record
+- name: copy named.conf
   copy:
-    content: '{{ bind.zone_file_record }}'
+    src: ./named.conf
+    dest: /etc/named.conf
+    group: named
+- name: create zone file 
+  copy:
+    src: ./zone-file.conf
     dest: '{{ bind.zone_file_location }}'
     group: named
-- name: debug ipv4 address
-  debug:
-    var: ansible_default_ipv4.address
 - name: check the named configuration
   shell: named-checkconf
   register: named_check_ouput

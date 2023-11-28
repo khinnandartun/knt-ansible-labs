@@ -1,0 +1,19 @@
+- name: install ipa-client package using dnf
+  dnf:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "@idm:DL1/client"
+- name: debug the output
+  debug:
+    msg: 'Proceed with fixed values and no DNS discovery? [no]:'
+- name: configure freeipa client
+  expect:
+    command: ipa-client-install --mkhomedir --force-join --no-ntp --server="{{ freeipa_client.servernamefqdn }}" --domain="{{ ansible_domain }}"
+    responses:
+      "Proceed with fixed values and no DNS discovery? [no]:": "yes"
+      'Continue to configure the system with these values? \[no\]:': 'yes'
+      'User authorized to enroll computers:': 'admin'
+      "Password for admin@AP-SOUTHEAST-1.COMPUTE.INTERNAL:": "{{ freeipa_server.admin_password }}"
+    echo: yes
+    # timeout: 60

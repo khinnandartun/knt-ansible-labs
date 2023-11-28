@@ -1,0 +1,26 @@
+
+- name: install ipa-server using dnf
+  dnf:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "@idm:DL1"
+    - ipa-server
+    - ipa-server-dns
+    - bind-dyndb-ldap
+- name: debug variable
+  debug:
+    msg: "{{ ansible_domain | split('.') | first | upper }}"
+- name: configure ipa-server
+  expect:
+    command: ipa-server-install -N --admin-password="{{ freeipa_server.admin_password }}" --domain="{{ freeipa_server.server_domain }}" --realm="{{ freeipa_server.realm_name }}" --netbios-name="{{ freeipa_server.netbios_name }}"
+    responses:
+      'Do you want to configure integrated DNS \(BIND\)\? \[no\]:': "\r"
+      'Server host name \[{{ ansible_hostname }}\]:': "\r"
+      'Directory Manager password:': "{{ freeipa_server.admin_password }}"
+      'Password \(confirm\):': "{{ freeipa_server.admin_password }}"
+      'Continue to configure the system with these values\? \[no\]:': "yes"
+    echo: yes
+    timeout: 600
+
+#Please confirm the domain name [ap-southeast-1.compute.internal]:

@@ -1,0 +1,26 @@
+[freeipa_server]
+x.x.x.x ansible_user=user_name ansible_ssh_private_key_file=../key.pem
+
+[freeipa_client]
+x.x.x.x ansible_user=user_name ansible_ssh_private_key_file=../key.pem
+
+[freeipa_group]
+x.x.x.x ansible_user=user_name ansible_ssh_private_key_file=../key.pem
+
+[freeipa_user]
+x.x.x.x ansible_user=user_name ansible_ssh_private_key_file=../key.pem
+
+[bind]
+x.x.x.x ansible_user=user_name ansible_ssh_private_key_file=../key.pem
+
+[ntp_server]
+x.x.x.x ansible_user=user_name ansible_ssh_private_key_file=../key.pem
+
+[ntp_client]
+x.x.x.x ansible_user=user_name ansible_ssh_private_key_file=../key.pem
+
+[rsyslog_server]
+x.x.x.x ansible_user=user_name ansible_ssh_private_key_file=../key.pem
+
+[rsyslog_client]
+x.x.x.x ansible_user=user_name ansible_ssh_private_key_file=../key.pem

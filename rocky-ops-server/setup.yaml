@@ -3,6 +3,26 @@
   roles:
     - { role: bind-server , tags: 'bind-server'}
 
+- hosts: freeipa_server
+  become: true
+  roles:
+    - { role: freeipa-server , tags: 'freeipa-server'}
+
+- hosts: freeipa_client
+  become: true
+  roles:
+    - { role: freeipa-client , tags: 'freeipa-client'}
+
+- hosts: freeipa_group
+  become: true
+  roles:
+    - { role: freeipa-group , tags: 'freeipa-group'}
+
+- hosts: freeipa_user
+  become: true
+  roles:
+    - { role: freeipa-user , tags: 'freeipa-user' }
+
 - hosts: ntp_server
   become: true
   roles:
@@ -17,3 +37,8 @@
   become: true
   roles:
     - { role: rsyslog-server , tags: 'rsyslog-server'}
+
+- hosts: rsyslog_client
+  become: true
+  roles:
+    - { role: rsyslog-client , tags: 'rsyslog-client'}
