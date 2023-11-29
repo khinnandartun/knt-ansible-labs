@@ -12,7 +12,8 @@ freeipa_server:
 
 
 freeipa_client:
-  servernamefqdn: ip-172-31-14-34.ap-southeast-1.compute.internal
+  servernamefqdn: ip-172-31-8-219.ap-southeast-1.compute.internal
+  server_admin_password: adminpassword
 
 freeipa_group:
   kerberos_username: admin
