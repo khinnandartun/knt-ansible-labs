@@ -1,9 +1,9 @@
-# - name: install ipa-client package using dnf
-#   dnf:
-#     name: "{{ item }}"
-#     state: present
-#   with_items:
-#     - "@idm:DL1/client"
+- name: install ipa-client package using dnf
+  dnf:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "@idm:DL1/client"
 - name: configure freeipa client
   expect:
     command: ipa-client-install --mkhomedir --force-join --no-ntp --server="{{ freeipa_client.servernamefqdn }}" --domain="{{ ansible_domain }}"
