@@ -4,5 +4,5 @@
     responses: "{{ freeipa_group.kerberos_auth_question }}"
     echo: yes
 - name: create group at freeipa
-  command: ipa group-add {{ item }}
+  command: ipa group-add {{ item.name }} --desc="{{ item.desc }}"
   with_items: '{{ freeipa_group.group_list }}'

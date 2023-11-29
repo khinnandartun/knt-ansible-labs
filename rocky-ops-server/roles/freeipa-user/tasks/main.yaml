@@ -1,7 +1,3 @@
-- name: debug the variable
-  debug:
-    msg: ipa user-add --first={{ item.first_name }} --last={{ item.last_name }} --password  {{ item.user_id }}
-  with_items: '{{ freeipa_user.user_list }}'
 
 - name: authennticate Kerberos credentials
   expect:
@@ -19,4 +15,13 @@
       'Enter Password again to verify:': "{{ item.password }}"
     echo: yes
   with_items: '{{ freeipa_user.user_list }}'
-  
+  ignore_errors: yes
+
+- name: add user to the group
+  # debug:
+  #   msg: ipa group-add-member {{ item.1 }} --users={{ item.0.user_id }}
+  command: ipa group-add-member {{ item.1 }} --users={{ item.0.user_id }}
+  with_subelements: 
+  - "{{ freeipa_user.user_list }}"
+  - groups
+  ignore_errors: yes

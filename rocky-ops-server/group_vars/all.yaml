@@ -21,10 +21,10 @@ freeipa_group:
   kerberos_auth_question:
       "Password for admin@AP-SOUTHEAST-1.COMPUTE.INTERNAL:": "adminpassword"
   group_list:
-    - sysadmin
-    - sre
-    - devops
-    - ugitops
+    - { name: sre , desc: SRE Group}
+    - { name: devops , desc: DevOps Group}
+    - { name: sysadmin , desc: System Admin Group}
+    - { name: ugitops , desc: IT Operation Group}
 
 freeipa_user:
   kerberos_username: admin
