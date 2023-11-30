@@ -23,6 +23,11 @@
   roles:
     - { role: freeipa-user , tags: 'freeipa-user' }
 
+- hosts: freeipa_hbac
+  become: true
+  roles:
+    - { role: freeipa-hbac , tags: 'freeipa-hbac' }
+
 - hosts: ntp_server
   become: true
   roles:

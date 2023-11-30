@@ -12,7 +12,7 @@ freeipa_server:
 
 
 freeipa_client:
-  servernamefqdn: ip-172-31-8-219.ap-southeast-1.compute.internal
+  servernamefqdn: ip-172-31-0-157.ap-southeast-1.compute.internal
   server_admin_password: adminpassword
 
 freeipa_group:
@@ -20,11 +20,14 @@ freeipa_group:
   kerberos_password: adminpassword
   kerberos_auth_question:
       "Password for admin@AP-SOUTHEAST-1.COMPUTE.INTERNAL:": "adminpassword"
-  group_list:
+  user_group_list:
     - { name: sre , desc: SRE Group}
     - { name: devops , desc: DevOps Group}
     - { name: sysadmin , desc: System Admin Group}
     - { name: ugitops , desc: IT Operation Group}
+  host_group_list:
+    - { name: monitoring , desc: Monitoring Server Group , host_list: [ip-172-31-0-157.ap-southeast-1.compute.internal,ip-172-31-3-71.ap-southeast-1.compute.internal] }
+    - { name: operations , desc: Operation Server Group , host_list: [ip-172-31-0-157.ap-southeast-1.compute.internal,ip-172-31-3-71.ap-southeast-1.compute.internal] }
 
 freeipa_user:
   kerberos_username: admin
@@ -34,6 +37,14 @@ freeipa_user:
   user_list:
     - { user_id: knt , first_name: Khin Nandar , last_name: Tun ,  password: khinnandartun ,  groups: [sre, devops] }
     - { user_id: waiyan , first_name: Wai Yan , last_name: Myint Myat ,  password: waiyanmyintmyat ,  groups: [sre, devops] }
+
+freeipa_hbac:
+  kerberos_username: admin
+  kerberos_password: adminpassword
+  kerberos_auth_question:
+      "Password for admin@AP-SOUTHEAST-1.COMPUTE.INTERNAL:": "adminpassword"
+  hbac_list:
+    - { name: devops ,desc: "allow monitoring server for sre,devops", user_groups: [sre,devops] , host_groups: [operations,monitoring] }
 
 
 ntp_server:

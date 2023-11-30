@@ -3,6 +3,19 @@
     command:  kinit {{ freeipa_group.kerberos_username }}
     responses: "{{ freeipa_group.kerberos_auth_question }}"
     echo: yes
-- name: create group at freeipa
+
+- name: create user group at freeipa
   command: ipa group-add {{ item.name }} --desc="{{ item.desc }}"
-  with_items: '{{ freeipa_group.group_list }}'
+  with_items: '{{ freeipa_group.user_group_list }}'
+  ignore_errors: yes
+
+- name: create host group at freeipa
+  command: ipa hostgroup-add {{ item.name }} --desc="{{ item.desc }}"
+  with_items: '{{ freeipa_group.host_group_list }}'
+
+- name: add host to host group
+  command: ipa hostgroup-add-member {{ item.0.name }} --hosts="{{ item.1 }}"
+  with_subelements: 
+  - "{{ freeipa_group.host_group_list }}"
+  - host_list
+  ignore_errors: yes

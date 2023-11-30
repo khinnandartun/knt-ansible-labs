@@ -1,0 +1,29 @@
+- name: authenticate Kerberos credentials
+  expect:
+    command:  kinit {{ freeipa_hbac.kerberos_username }}
+    responses: "{{ freeipa_hbac.kerberos_auth_question }}"
+    echo: yes
+
+- name: create hbac at freeipa
+  command: ipa hbacrule-add {{ item.name }} --desc="{{ item.desc }}"
+  with_items: '{{ freeipa_hbac.hbac_list }}'
+  ignore_errors: yes
+
+- name: append usergroup at hbac
+  command: ipa hbacrule-add-user  "{{ item.0.name }}" --groups="{{ item.1 }}"
+  with_subelements:
+  - "{{ freeipa_hbac.hbac_list }}"
+  - user_groups
+  ignore_errors: yes
+
+- name: append hostgroup at hbac
+  command: ipa hbacrule-add-host  "{{ item.0.name }}" --hostgroups="{{ item.1 }}"
+  with_subelements:
+  - "{{ freeipa_hbac.hbac_list }}"
+  - host_groups
+  ignore_errors: yes
+
+- name: open via all service for rule
+  command: ipa hbacrule-mod {{ item.name }} --servicecat=all
+  with_items: '{{ freeipa_hbac.hbac_list }}'
+  ignore_errors: yes
